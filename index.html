@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TITAN MONSTER PRO - מרכז בקרה</title>
+    <style>
+        body { background-color: #1B1310; color: #D2B48C; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0; padding: 20px; }
+        .header { font-size: 32px; font-weight: bold; text-shadow: 2px 2px #000; margin-bottom: 20px; color: #8B4513; }
+        .status { color: #4CAF50; font-size: 14px; margin-bottom: 10px; }
+        
+        /* מסך המחשב */
+        #screen-container { width: 90%; max-width: 800px; height: 450px; border: 5px solid #5D4037; border-radius: 20px; overflow: hidden; background: #000; box-shadow: 0 10px 30px rgba(0,0,0,0.7); position: relative; cursor: crosshair; }
+        #screen { width: 100%; height: 100%; object-fit: stretch; }
+
+        /* כפתורי 3D חומים */
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 90%; max-width: 800px; margin-top: 30px; }
+        .btn { background-color: #6D4C41; color: #F5F5DC; border: none; padding: 20px; font-size: 18px; font-weight: bold; border-radius: 15px; cursor: pointer; border-bottom: 6px solid #3E2723; transition: 0.1s; text-align: center; }
+        .btn:active { border-bottom: 2px solid #3E2723; transform: translateY(4px); }
+        .btn-shutdown { background-color: #3E2723; }
+
+        /* תיבת טקסט */
+        .input-group { width: 90%; max-width: 800px; margin-top: 20px; display: flex; gap: 10px; }
+        input { flex: 1; padding: 15px; border-radius: 10px; border: none; background: #EADDCA; font-size: 18px; text-align: right; }
+    </style>
+</head>
+<body>
+    <div class="header">TITAN MONSTER V5.3 PRO</div>
+    <div class="status">● המערכת מחוברת למחשב סלון</div>
+
+    <div id="screen-container" onclick="sendClick(event)">
+        <img id="screen" src="" alt="Live Stream">
+    </div>
+
+    <div class="input-group">
+        <input type="text" id="textInput" placeholder="הקלד פקודה למחשב...">
+        <button class="btn" onclick="sendType()" style="padding: 10px 30px;">שלח</button>
+    </div>
+
+    <div class="controls">
+        <button class="btn" onclick="run('vol_up')">🔊 הגבר ווליום</button>
+        <button class="btn" onclick="run('vol_down')">🔉 הנמך ווליום</button>
+        <button class="btn" onclick="run('play_pause')">⏯️ נגן / השהה</button>
+        <button class="btn btn-shutdown" onclick="run('shutdown')">🛑 כיבוי מחשב</button>
+    </div>
+
+    <script>
+        const PC_IP = "10.100.102.10";
+
+        // רענון מסך חי
+        setInterval(() => {
+            document.getElementById('screen').src = `http://${PC_IP}:5000/screen?t=${Date.now()}`;
+        }, 500);
+
+        function run(cmd, extra = {}) {
+            fetch(`http://${PC_IP}:5000/action`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cmd, ...extra })
+            });
+        }
+
+        function sendType() {
+            const text = document.getElementById('textInput').value;
+            run('type', { text });
+            document.getElementById('textInput').value = '';
+        }
+
+        function sendClick(e) {
+            const rect = document.getElementById('screen-container').getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width;
+            const y = (e.clientY - rect.top) / rect.height;
+            run('click', { x, y });
+        }
+    </script>
+</body>
+</html>
