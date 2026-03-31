@@ -3,24 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TITAN HUB PRO</title>
+    <title>TITAN SURVEILLANCE HUB</title>
     <style>
         body { background: #1B1310; color: #D2B48C; font-family: sans-serif; text-align: center; margin: 0; padding: 10px; }
         .header { color: #8B4513; text-shadow: 2px 2px #000; font-size: 24px; font-weight: bold; margin: 10px 0; }
-        .bridge-btn { background: #E67E22; color: white; padding: 15px; border-radius: 12px; display: block; text-decoration: none; font-weight: bold; margin-bottom: 15px; border-bottom: 5px solid #A04000; }
         .selector { display: flex; gap: 8px; margin-bottom: 15px; }
         .n-btn { flex: 1; padding: 15px; border-radius: 12px; border: 2px solid #5D4037; background: #3E2723; color: #D2B48C; font-weight: bold; cursor: pointer; }
-        .active { background: #8B4513; border-color: #F5F5DC; box-shadow: 0 0 15px #8B4513; }
-        .screen-container { width: 100%; max-width: 500px; height: 280px; border: 4px solid #5D4037; border-radius: 15px; background: #000; margin: 0 auto; overflow: hidden; position: relative; }
+        .active { background: #8B4513; border-color: #F5F5DC; }
+        .screen-container { width: 98%; max-width: 500px; height: 300px; border: 4px solid #5D4037; border-radius: 20px; background: #000; margin: 0 auto; overflow: hidden; position: relative; }
         #screen { width: 100%; height: 100%; object-fit: contain; }
         .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .btn { background: #6D4C41; color: #F5F5DC; border: none; padding: 20px; border-radius: 15px; font-weight: bold; border-bottom: 6px solid #3E2723; font-size: 18px; width: 100%; }
-        .btn:active { transform: translateY(4px); border-bottom: 2px solid #3E2723; }
+        .btn { background: #6D4C41; color: #F5F5DC; border: none; padding: 18px; border-radius: 15px; font-weight: bold; border-bottom: 5px solid #3E2723; font-size: 16px; }
+        .cam-btn { background: #5D4037; color: #FFCC80; border: 2px solid #8B4513; margin-top: 10px; width: 100%; padding: 15px; border-radius: 15px; font-weight: bold; }
+        .cam-active { background: #D84315; color: white; border-color: white; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
-    <div class="header">TITAN v6.1 ELITE</div>
-    <a href="#" id="bridge" class="bridge-btn" target="_blank">🛠️ לחץ כאן פעם אחת לאישור הכפתורים</a>
+    <div class="header">TITAN v7.0 SURVEILLANCE</div>
     
     <div class="selector">
         <button id="n-salon" class="n-btn active" onclick="setNode('salon')">🛋️ סלון</button>
@@ -31,9 +31,11 @@
         <img id="screen" src="" alt="TITAN CONNECTING...">
     </div>
 
+    <button id="cam-toggle" class="cam-btn" onclick="toggleCam()">📷 מעבר למצלמת אבטחה</button>
+
     <div class="btn-grid">
-        <button class="btn" onclick="act('vol_up')">🔊 ווליום +</button>
-        <button class="btn" onclick="act('vol_down')">🔉 ווליום -</button>
+        <button class="btn" onclick="act('vol_up')">🔊 פלוס</button>
+        <button class="btn" onclick="act('vol_down')">🔉 מינוס</button>
         <button class="btn" onclick="act('lock')">🔒 נעל PC</button>
         <button class="btn" style="background:#3E2723;" onclick="act('shutdown')">🛑 כיבוי</button>
     </div>
@@ -41,55 +43,49 @@
     <script>
         let nodes = { salon: { ip: "10.100.102.10" }, room: { ip: "10.100.102.16" } };
         let active = 'salon';
+        let viewMode = 'screen'; // 'screen' או 'webcam'
 
-        async function sync() {
-            try {
-                const s = await fetch('https://raw.githubusercontent.com/yanivmizrachiy/hadash/main/salon_status.json').then(r => r.json());
-                const r = await fetch('https://raw.githubusercontent.com/yanivmizrachiy/hadash/main/room_status.json').then(r => r.json());
-                nodes.salon.ip = s.ip; nodes.room.ip = r.ip;
-                document.getElementById('bridge').href = `http://${nodes[active].ip}:5000/screen`;
-            } catch(e) {}
+        function toggleCam() {
+            const btn = document.getElementById('cam-toggle');
+            if(viewMode === 'screen') {
+                viewMode = 'webcam';
+                btn.innerText = "📺 חזור למסך מחשב";
+                btn.classList.add('cam-active');
+            } else {
+                viewMode = 'screen';
+                btn.innerText = "📷 מעבר למצלמת אבטחה";
+                btn.classList.remove('cam-active');
+                act('cam_off'); // מכבה את המצלמה בשרת לחיסכון
+            }
         }
+
+        setInterval(() => {
+            const endpoint = viewMode === 'screen' ? 'screen' : 'webcam';
+            if(nodes[active].ip) {
+                document.getElementById('screen').src = `http://${nodes[active].ip}:5000/${endpoint}?t=${Date.now()}`;
+            }
+        }, 400);
 
         function setNode(n) {
             active = n;
             document.querySelectorAll('.n-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(n === 'salon' ? 'n-salon' : 'n-room').classList.add('active');
-            sync();
         }
 
-        // רענון מסך
-        setInterval(() => {
-            if(nodes[active].ip) document.getElementById('screen').src = `http://${nodes[active].ip}:5000/screen?t=${Date.now()}`;
-        }, 400);
-
-        // פונקציית שליחת פקודה אמיתית
         function act(cmd, extra = {}) {
-            const url = `http://${nodes[active].ip}:5000/action`;
-            fetch(url, {
+            fetch(`http://${nodes[active].ip}:5000/action`, {
                 method: 'POST',
-                mode: 'cors',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ cmd, ...extra })
-            })
-            .then(res => console.log("Success:", cmd))
-            .catch(err => {
-                console.log("Error, trying protocol bypass...");
-                // ניסיון עקיפה נוסף אם נכשל
-                const img = new Image();
-                img.src = `${url}?cmd=${cmd}&t=${Date.now()}`;
             });
         }
 
-        // לחיצה על המסך = עכבר אמיתי
         document.getElementById('screen-box').onclick = function(e) {
-            const rect = this.getBoundingClientRect();
-            const x = (e.clientX - rect.left) / rect.width;
-            const y = (e.clientY - rect.top) / rect.height;
-            act('click', { x, y });
+            if(viewMode === 'screen') {
+                const rect = this.getBoundingClientRect();
+                act('click', { x: (e.clientX - rect.left) / rect.width, y: (e.clientY - rect.top) / rect.height });
+            }
         };
-
-        sync(); setInterval(sync, 10000);
     </script>
 </body>
 </html>
