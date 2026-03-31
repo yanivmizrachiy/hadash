@@ -1,81 +1,61 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image, TextInput, ScrollView, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Image, TextInput, Dimensions, TouchableWithoutFeedback, ScrollView } from 'react-native';
 
-const PC_INFO_URL = "https://raw.githubusercontent.com/yanivmizrachiy/hadash/main/pc_info.json";
+const PC_IP = "10.100.102.10";
 
 export default function App() {
-  const [pcIp, setPcIp] = useState("10.100.102.10"); // ה-IP שקיבלנו מהמחשב שלך
-  const [screenUrl, setScreenUrl] = useState(null);
-  const [textToSend, setTextToSend] = useState("");
+  const [screenUrl, setScreenUrl] = useState(`http://${PC_IP}:5000/screen`);
+  const [text, setText] = useState("");
 
   useEffect(() => {
-    // רענון מסך כל חצי שנייה למהירות מקסימלית
     const interval = setInterval(() => {
-      setScreenUrl(`http://${pcIp}:5000/screen?t=${Date.now()}`);
-    }, 500);
+      setScreenUrl(`http://${PC_IP}:5000/screen?t=${Date.now()}`);
+    }, 350);
     return () => clearInterval(interval);
-  }, [pcIp]);
+  }, []);
 
-  const runCmd = (cmd, extra = {}) => {
-    fetch(`http://${pcIp}:5000/action`, {
+  const run = (cmd, extra = {}) => {
+    fetch(`http://${PC_IP}:5000/action`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ cmd, ...extra })
     });
   };
 
+  const onTouch = (e) => {
+    const { locationX, locationY } = e.nativeEvent;
+    run('click', { x: locationX / (Dimensions.get('window').width * 0.95), y: locationY / 230 });
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>TITAN MONSTER V5.3</Text>
-      
-      {/* תצוגת מסך המחשב בשידור חי */}
-      <View style={styles.screenContainer}>
-        {screenUrl && <Image source={{ uri: screenUrl }} style={styles.liveImage} resizeMode="contain" />}
-      </View>
-
-      <ScrollView contentContainerStyle={styles.controls}>
-        <TextInput 
-          style={styles.input} 
-          placeholder="הקלד טקסט למחשב..." 
-          placeholderTextColor="#A1887F"
-          onChangeText={setTextToSend}
-          onSubmitEditing={() => runCmd('type', {text: textToSend})}
-        />
-
-        <View style={styles.row}>
-          <TouchableOpacity style={[styles.btn3d, {backgroundColor: '#5D4037'}]} onPress={() => runCmd('type', {text: textToSend})}>
-            <Text style={styles.btnText}>שלח טקסט</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={[styles.btn3d, {backgroundColor: '#3E2723'}]} onPress={() => runCmd('shutdown')}>
-            <Text style={styles.btnText}>כיבוי מחשב</Text>
-          </TouchableOpacity>
+    <View style={styles.c}>
+      <Text style={styles.h}>TITAN MONSTER PRO</Text>
+      <TouchableWithoutFeedback onPress={onTouch}>
+        <View style={styles.f}><Image source={{ uri: screenUrl }} style={styles.i} resizeMode="stretch" /></View>
+      </TouchableWithoutFeedback>
+      <ScrollView style={styles.u}>
+        <TextInput style={styles.in} placeholder="הקלד למחשב..." value={text} onChangeText={setText} textAlign="right" />
+        <TouchableOpacity style={styles.b} onPress={() => { run('type', {text}); setText(""); }}><Text style={styles.bt}>שלח טקסט</Text></TouchableOpacity>
+        <View style={styles.r}>
+          <TouchableOpacity style={styles.bs} onPress={() => run('vol_up')}><Text style={styles.bt}>🔊 +</Text></TouchableOpacity>
+          <TouchableOpacity style={styles.bs} onPress={() => run('vol_down')}><Text style={styles.bt}>🔉 -</Text></TouchableOpacity>
+          <TouchableOpacity style={styles.bs} onPress={() => run('play_pause')}><Text style={styles.bt}>⏯️</Text></TouchableOpacity>
         </View>
-
-        <Text style={styles.status}>סטטוס: מחובר למחשב סלון ✅</Text>
+        <TouchableOpacity style={[styles.b, {backgroundColor: '#3E2723'}]} onPress={() => run('shutdown')}><Text style={styles.bt}>🛑 כיבוי PC</Text></TouchableOpacity>
       </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#1B1310', paddingTop: 50 },
-  header: { color: '#D2B48C', fontSize: 26, fontWeight: 'bold', textAlign: 'center', marginBottom: 20 },
-  screenContainer: { 
-    width: '95%', height: 230, alignSelf: 'center', backgroundColor: '#000', 
-    borderRadius: 20, borderWidth: 4, borderColor: '#5D4037', overflow: 'hidden', elevation: 20 
-  },
-  liveImage: { width: '100%', height: '100%' },
-  controls: { padding: 20, alignItems: 'center' },
-  input: { 
-    width: '100%', height: 60, backgroundColor: '#EADDCA', borderRadius: 15, 
-    paddingHorizontal: 20, textAlign: 'right', fontSize: 18, marginBottom: 20, borderWidth: 2, borderColor: '#8D6E63' 
-  },
-  row: { flexDirection: 'row-reverse', justifyContent: 'space-between', width: '100%' },
-  btn3d: { 
-    width: '48%', height: 80, borderRadius: 15, justifyContent: 'center', alignItems: 'center',
-    borderBottomWidth: 6, borderBottomColor: '#2D1A12', elevation: 8, shadowColor: '#000'
-  },
-  btnText: { color: '#F5F5DC', fontSize: 18, fontWeight: 'bold' },
-  status: { color: '#8D6E63', marginTop: 30, fontSize: 14 }
+  c: { flex: 1, backgroundColor: '#1B1310', paddingTop: 50, alignItems: 'center' },
+  h: { color: '#D2B48C', fontSize: 26, fontWeight: 'bold', marginBottom: 20 },
+  f: { width: '95%', height: 230, borderRadius: 15, borderWidth: 3, borderColor: '#5D4037', overflow: 'hidden', backgroundColor: '#000' },
+  i: { width: '100%', height: '100%' },
+  u: { width: '100%', padding: 20 },
+  in: { backgroundColor: '#EADDCA', borderRadius: 12, padding: 15, fontSize: 18, marginBottom: 10 },
+  b: { backgroundColor: '#8B4513', padding: 18, borderRadius: 15, alignItems: 'center', marginBottom: 15, borderBottomWidth: 6, borderBottomColor: '#3E2723' },
+  bs: { backgroundColor: '#6D4C41', width: '30%', padding: 15, borderRadius: 12, alignItems: 'center', borderBottomWidth: 5, borderBottomColor: '#3E2723' },
+  r: { flexDirection: 'row-reverse', justifyContent: 'space-between', marginBottom: 15 },
+  bt: { color: '#F5F5DC', fontWeight: 'bold', fontSize: 18 }
 });
