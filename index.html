@@ -6,86 +6,55 @@
     <title>TITAN SURVEILLANCE HUB</title>
     <style>
         body { background: #1B1310; color: #D2B48C; font-family: sans-serif; text-align: center; margin: 0; padding: 10px; }
-        .header { color: #8B4513; text-shadow: 2px 2px #000; font-size: 24px; font-weight: bold; margin: 10px 0; }
-        .selector { display: flex; gap: 8px; margin-bottom: 15px; }
-        .n-btn { flex: 1; padding: 15px; border-radius: 12px; border: 2px solid #5D4037; background: #3E2723; color: #D2B48C; font-weight: bold; cursor: pointer; }
-        .active { background: #8B4513; border-color: #F5F5DC; }
-        .screen-container { width: 98%; max-width: 500px; height: 300px; border: 4px solid #5D4037; border-radius: 20px; background: #000; margin: 0 auto; overflow: hidden; position: relative; }
+        .header { color: #8B4513; text-shadow: 2px 2px #000; font-size: 22px; margin: 10px 0; font-weight: bold; }
+        .bridge { background: #E67E22; color: white; padding: 12px; border-radius: 10px; display: block; text-decoration: none; margin-bottom: 10px; font-weight: bold; }
+        .selector { display: flex; gap: 8px; margin-bottom: 10px; }
+        .n-btn { flex: 1; padding: 15px; border-radius: 12px; border: 2px solid #5D4037; background: #3E2723; color: #D2B48C; font-weight: bold; }
+        .active { background: #8B4513; border-color: #F5F5DC; box-shadow: 0 0 15px #8B4513; }
+        .screen-container { width: 98%; max-width: 500px; height: 280px; border: 4px solid #5D4037; border-radius: 15px; background: #000; margin: 0 auto; overflow: hidden; position: relative; }
         #screen { width: 100%; height: 100%; object-fit: contain; }
         .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
         .btn { background: #6D4C41; color: #F5F5DC; border: none; padding: 18px; border-radius: 15px; font-weight: bold; border-bottom: 5px solid #3E2723; font-size: 16px; }
         .cam-btn { background: #5D4037; color: #FFCC80; border: 2px solid #8B4513; margin-top: 10px; width: 100%; padding: 15px; border-radius: 15px; font-weight: bold; }
-        .cam-active { background: #D84315; color: white; border-color: white; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+        .cam-active { background: #D84315; color: white; }
     </style>
 </head>
 <body>
-    <div class="header">TITAN v7.0 SURVEILLANCE</div>
-    
+    <div class="header">TITAN v7.0 PRO</div>
+    <a href="#" id="bridge" class="bridge" target="_blank">🛠️ לחץ כאן פעם אחת להפעלת כפתורים</a>
     <div class="selector">
         <button id="n-salon" class="n-btn active" onclick="setNode('salon')">🛋️ סלון</button>
         <button id="n-room" class="n-btn" onclick="setNode('room')">🖥️ חדר</button>
     </div>
-
-    <div class="screen-container" id="screen-box">
-        <img id="screen" src="" alt="TITAN CONNECTING...">
-    </div>
-
+    <div class="screen-container" id="screen-box"><img id="screen" src=""></div>
     <button id="cam-toggle" class="cam-btn" onclick="toggleCam()">📷 מעבר למצלמת אבטחה</button>
-
     <div class="btn-grid">
-        <button class="btn" onclick="act('vol_up')">🔊 פלוס</button>
-        <button class="btn" onclick="act('vol_down')">🔉 מינוס</button>
-        <button class="btn" onclick="act('lock')">🔒 נעל PC</button>
+        <button class="btn" onclick="act('vol_up')">🔊 +</button>
+        <button class="btn" onclick="act('vol_down')">🔉 -</button>
+        <button class="btn" onclick="act('lock')">🔒 נעל</button>
         <button class="btn" style="background:#3E2723;" onclick="act('shutdown')">🛑 כיבוי</button>
     </div>
-
     <script>
         let nodes = { salon: { ip: "10.100.102.10" }, room: { ip: "10.100.102.16" } };
-        let active = 'salon';
-        let viewMode = 'screen'; // 'screen' או 'webcam'
-
+        let active = 'salon'; let view = 'screen';
+        async function sync() {
+            try {
+                const s = await fetch('https://raw.githubusercontent.com/yanivmizrachiy/hadash/main/salon_status.json').then(r => r.json());
+                const r = await fetch('https://raw.githubusercontent.com/yanivmizrachiy/hadash/main/room_status.json').then(r => r.json());
+                nodes.salon.ip = s.ip; nodes.room.ip = r.ip;
+                document.getElementById('bridge').href = `http://${nodes[active].ip}:5000/screen`;
+            } catch(e) {}
+        }
+        function setNode(n) { active = n; document.querySelectorAll('.n-btn').forEach(b => b.classList.remove('active')); document.getElementById('n-'+n).classList.add('active'); sync(); }
         function toggleCam() {
-            const btn = document.getElementById('cam-toggle');
-            if(viewMode === 'screen') {
-                viewMode = 'webcam';
-                btn.innerText = "📺 חזור למסך מחשב";
-                btn.classList.add('cam-active');
-            } else {
-                viewMode = 'screen';
-                btn.innerText = "📷 מעבר למצלמת אבטחה";
-                btn.classList.remove('cam-active');
-                act('cam_off'); // מכבה את המצלמה בשרת לחיסכון
-            }
+            const b = document.getElementById('cam-toggle');
+            if(view === 'screen') { view = 'webcam'; b.innerText = "📺 חזור למסך"; b.classList.add('cam-active'); }
+            else { view = 'screen'; b.innerText = "📷 מעבר למצלמה"; b.classList.remove('cam-active'); act('cam_off'); }
         }
-
-        setInterval(() => {
-            const endpoint = viewMode === 'screen' ? 'screen' : 'webcam';
-            if(nodes[active].ip) {
-                document.getElementById('screen').src = `http://${nodes[active].ip}:5000/${endpoint}?t=${Date.now()}`;
-            }
-        }, 400);
-
-        function setNode(n) {
-            active = n;
-            document.querySelectorAll('.n-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(n === 'salon' ? 'n-salon' : 'n-room').classList.add('active');
-        }
-
-        function act(cmd, extra = {}) {
-            fetch(`http://${nodes[active].ip}:5000/action`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ cmd, ...extra })
-            });
-        }
-
-        document.getElementById('screen-box').onclick = function(e) {
-            if(viewMode === 'screen') {
-                const rect = this.getBoundingClientRect();
-                act('click', { x: (e.clientX - rect.left) / rect.width, y: (e.clientY - rect.top) / rect.height });
-            }
-        };
+        setInterval(() => { if(nodes[active].ip) document.getElementById('screen').src = `http://${nodes[active].ip}:5000/${view}?t=${Date.now()}`; }, 400);
+        function act(cmd, extra = {}) { fetch(`http://${nodes[active].ip}:5000/action`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({cmd, ...extra}) }); }
+        document.getElementById('screen-box').onclick = function(e) { if(view==='screen') { const r = this.getBoundingClientRect(); act('click', { x: (e.clientX - r.left)/r.width, y: (e.clientY - r.top)/r.height }); } };
+        sync(); setInterval(sync, 10000);
     </script>
 </body>
 </html>
