@@ -3,37 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TITAN OVERLORD</title>
+    <title>TITAN HUB PRO</title>
     <style>
         body { background: #1B1310; color: #D2B48C; font-family: sans-serif; text-align: center; margin: 0; padding: 10px; }
         .header { color: #8B4513; text-shadow: 2px 2px #000; font-size: 24px; font-weight: bold; margin: 10px 0; }
-        .bridge-btn { background: #4CAF50; color: white; padding: 12px; border-radius: 10px; display: block; text-decoration: none; font-weight: bold; margin-bottom: 15px; border-bottom: 4px solid #2E7D32; }
+        .bridge-btn { background: #E67E22; color: white; padding: 15px; border-radius: 12px; display: block; text-decoration: none; font-weight: bold; margin-bottom: 15px; border-bottom: 5px solid #A04000; }
         .selector { display: flex; gap: 8px; margin-bottom: 15px; }
         .n-btn { flex: 1; padding: 15px; border-radius: 12px; border: 2px solid #5D4037; background: #3E2723; color: #D2B48C; font-weight: bold; cursor: pointer; }
         .active { background: #8B4513; border-color: #F5F5DC; box-shadow: 0 0 15px #8B4513; }
         .screen-container { width: 100%; max-width: 500px; height: 280px; border: 4px solid #5D4037; border-radius: 15px; background: #000; margin: 0 auto; overflow: hidden; position: relative; }
         #screen { width: 100%; height: 100%; object-fit: contain; }
         .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .btn { background: #6D4C41; color: #F5F5DC; border: none; padding: 18px; border-radius: 15px; font-weight: bold; border-bottom: 5px solid #3E2723; font-size: 16px; }
+        .btn { background: #6D4C41; color: #F5F5DC; border: none; padding: 20px; border-radius: 15px; font-weight: bold; border-bottom: 6px solid #3E2723; font-size: 18px; width: 100%; }
         .btn:active { transform: translateY(4px); border-bottom: 2px solid #3E2723; }
     </style>
 </head>
 <body>
-    <div class="header">TITAN v6.0 OVERLORD</div>
-    <a href="#" id="bridge" class="bridge-btn" target="_blank">✅ לחץ כאן פעם אחת להפעלת חיבור</a>
+    <div class="header">TITAN v6.1 ELITE</div>
+    <a href="#" id="bridge" class="bridge-btn" target="_blank">🛠️ לחץ כאן פעם אחת לאישור הכפתורים</a>
     
     <div class="selector">
         <button id="n-salon" class="n-btn active" onclick="setNode('salon')">🛋️ סלון</button>
-        <button id="node-room" class="n-btn" onclick="setNode('room')">🖥️ חדר</button>
+        <button id="n-room" class="n-btn" onclick="setNode('room')">🖥️ חדר</button>
     </div>
 
-    <div class="screen-container" onclick="sendClick(event)">
+    <div class="screen-container" id="screen-box">
         <img id="screen" src="" alt="TITAN CONNECTING...">
     </div>
 
     <div class="btn-grid">
-        <button class="btn" onclick="act('vol_up')">🔊 +</button>
-        <button class="btn" onclick="act('vol_down')">🔉 -</button>
+        <button class="btn" onclick="act('vol_up')">🔊 ווליום +</button>
+        <button class="btn" onclick="act('vol_down')">🔉 ווליום -</button>
         <button class="btn" onclick="act('lock')">🔒 נעל PC</button>
         <button class="btn" style="background:#3E2723;" onclick="act('shutdown')">🛑 כיבוי</button>
     </div>
@@ -54,26 +54,40 @@
         function setNode(n) {
             active = n;
             document.querySelectorAll('.n-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(n === 'salon' ? 'n-salon' : 'node-room').classList.add('active');
+            document.getElementById(n === 'salon' ? 'n-salon' : 'n-room').classList.add('active');
             sync();
         }
 
+        // רענון מסך
         setInterval(() => {
             if(nodes[active].ip) document.getElementById('screen').src = `http://${nodes[active].ip}:5000/screen?t=${Date.now()}`;
-        }, 350);
+        }, 400);
 
+        // פונקציית שליחת פקודה אמיתית
         function act(cmd, extra = {}) {
-            fetch(`http://${nodes[active].ip}:5000/action`, {
+            const url = `http://${nodes[active].ip}:5000/action`;
+            fetch(url, {
                 method: 'POST',
+                mode: 'cors',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ cmd, ...extra })
+            })
+            .then(res => console.log("Success:", cmd))
+            .catch(err => {
+                console.log("Error, trying protocol bypass...");
+                // ניסיון עקיפה נוסף אם נכשל
+                const img = new Image();
+                img.src = `${url}?cmd=${cmd}&t=${Date.now()}`;
             });
         }
 
-        function sendClick(e) {
-            const rect = document.querySelector('.screen-container').getBoundingClientRect();
-            act('click', { x: (e.clientX - rect.left)/rect.width, y: (e.clientY - rect.top)/rect.height });
-        }
+        // לחיצה על המסך = עכבר אמיתי
+        document.getElementById('screen-box').onclick = function(e) {
+            const rect = this.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width;
+            const y = (e.clientY - rect.top) / rect.height;
+            act('click', { x, y });
+        };
 
         sync(); setInterval(sync, 10000);
     </script>
