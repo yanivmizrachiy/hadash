@@ -1,0 +1,13 @@
+{
+  "name": "TITAN OMNI-CONTROL",
+  "short_name": "TITAN",
+  "description": "מרכז בקרה ומעקב עולמי - יניב מזרחי",
+  "icons": [
+    { "src": "assets/icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "start_url": "/hadash/index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1B1310",
+  "theme_color": "#8B4513"
+}

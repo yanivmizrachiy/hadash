@@ -19,6 +19,20 @@
     </style>
 </head>
 <body>
+    <button id="installBtn" style="display:none; background:#FFD700; color:#1B1310; width:100%; padding:20px; font-weight:bold; border:none; border-radius:15px; margin-bottom:15px; font-size:18px; box-shadow: 0 0 20px #FFD700;">📥 התקן אפליקציית TITAN למסך הבית</button>
+    <script>
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault(); deferredPrompt = e;
+            installBtn.style.display = 'block';
+        });
+        installBtn.addEventListener('click', (e) => {
+            installBtn.style.display = 'none';
+            deferredPrompt.prompt();
+        });
+        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
+    </script>
     <div class="header">TITAN OMNI-CONTROL v9.0</div>
     <div class="selector">
         <button id="n-salon" class="n-btn active" onclick="setNode('salon')">🛋️ סלון</button>
@@ -55,3 +69,4 @@
     </script>
 </body>
 </html>
+
