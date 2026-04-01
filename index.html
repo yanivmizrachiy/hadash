@@ -3,71 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TITAN V8.0 OVERLORD</title>
+    <title>TITAN OMNI-HUB V9.0</title>
     <style>
-        body { background: #1B1310; color: #D2B48C; font-family: sans-serif; text-align: center; margin: 0; padding: 10px; user-select: none; }
-        .header { color: #8B4513; text-shadow: 2px 2px #000; font-size: 24px; font-weight: bold; }
-        .selector { display: flex; gap: 8px; margin: 15px 0; }
-        .n-btn { flex: 1; padding: 16px; border-radius: 12px; border: 2px solid #5D4037; background: #3E2723; color: #D2B48C; font-weight: bold; }
+        body { background: #1B1310; color: #D2B48C; font-family: sans-serif; text-align: center; margin: 0; padding: 10px; }
+        .header { color: #8B4513; text-shadow: 2px 2px #000; font-size: 22px; font-weight: bold; margin: 10px 0; }
+        .selector { display: flex; gap: 8px; margin-bottom: 10px; }
+        .n-btn { flex: 1; padding: 15px; border-radius: 12px; border: 2px solid #5D4037; background: #3E2723; color: #D2B48C; font-weight: bold; }
         .active { background: #8B4513; border-color: #F5F5DC; box-shadow: 0 0 15px #8B4513; }
-        .screen-container { width: 100%; max-width: 600px; height: 320px; border: 4px solid #5D4037; border-radius: 20px; background: #000; margin: 0 auto; overflow: hidden; position: relative; }
+        .screen-container { width: 98%; max-width: 500px; height: 280px; border: 4px solid #5D4037; border-radius: 15px; background: #000; margin: 0 auto; overflow: hidden; position: relative; }
         #screen { width: 100%; height: 100%; object-fit: contain; }
-        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .btn { background: #6D4C41; color: #F5F5DC; border: none; padding: 18px; border-radius: 15px; font-weight: bold; border-bottom: 6px solid #3E2723; }
-        .btn:active { transform: translateY(4px); border-bottom: 2px solid #3E2723; }
-        .cam-btn { background: #5D4037; color: #FFCC80; border: 2px solid #8B4513; margin-top: 10px; width: 100%; padding: 15px; border-radius: 15px; font-weight: bold; }
         .stats { font-size: 11px; color: #8D6E63; margin-top: 5px; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .btn { background: #6D4C41; color: #F5F5DC; border: none; padding: 18px; border-radius: 15px; font-weight: bold; border-bottom: 5px solid #3E2723; }
+        .repair-btn { background: #455A64; color: #90A4AE; font-size: 10px; padding: 5px; margin-top: 20px; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
-    <div class="header">TITAN OMNI v8.0</div>
+    <div class="header">TITAN OMNI-CONTROL v9.0</div>
     <div class="selector">
         <button id="n-salon" class="n-btn active" onclick="setNode('salon')">🛋️ סלון</button>
-        <button id="n-room" class="n-btn" onclick="setNode('room')">🖥️ חדר</button>
+        <button id="node-room" class="n-btn" onclick="setNode('room')">🖥️ חדר</button>
     </div>
     <div class="screen-container" id="screen-box"><img id="screen" src=""></div>
-    <div id="stats" class="stats">Loading System Stats...</div>
-    <button id="cam-toggle" class="cam-btn" onclick="toggleCam()">📷 מצלמת אבטחה (Live)</button>
-    <div class="controls">
+    <div id="stats" class="stats">Connecting to Global Mesh...</div>
+    <div class="btn-grid">
+        <button class="btn" onclick="toggleView()">📷 החלף מצלמה/מסך</button>
         <button class="btn" onclick="act('vol_up')">🔊 פלוס</button>
         <button class="btn" onclick="act('vol_down')">🔉 מינוס</button>
         <button class="btn" onclick="act('lock')">🔒 נעל PC</button>
         <button class="btn" style="background:#3E2723;" onclick="act('shutdown')">🛑 כיבוי</button>
     </div>
+    <div class="repair-btn" onclick="act('repair')">🛠️ אבחון ותיקון מרחוק (Emergency)</div>
     <script>
-        let nodes = { salon: { ip: "10.100.102.10" }, room: { ip: "10.100.102.16" } };
+        let nodes = { salon: { ip: "" }, room: { ip: "" } };
         let active = 'salon'; let view = 'screen';
         async function sync() {
             try {
                 const s = await fetch('https://raw.githubusercontent.com/yanivmizrachiy/hadash/main/salon_status.json').then(r => r.json());
                 const r = await fetch('https://raw.githubusercontent.com/yanivmizrachiy/hadash/main/room_status.json').then(r => r.json());
                 nodes.salon.ip = s.ip; nodes.room.ip = r.ip;
-                const stats = await fetch(`http://${nodes[active].ip}:5000/status_check`).then(r => r.json());
-                document.getElementById('stats').innerText = `CPU: ${stats.cpu}% | RAM: ${stats.ram}% | IP: ${nodes[active].ip}`;
+                const h = await fetch(`http://${nodes[active].ip}:5000/health`).then(r => r.json());
+                document.getElementById('stats').innerText = `CPU: ${h.cpu}% | RAM: ${h.ram}% | GLOBAL IP: ${nodes[active].ip}`;
             } catch(e) {}
         }
-        function setNode(n) { active = n; document.querySelectorAll('.n-btn').forEach(b => b.classList.remove('active')); document.getElementById('n-'+n).classList.add('active'); sync(); }
-        function toggleCam() { view = (view === 'screen' ? 'webcam' : 'screen'); sync(); }
-        setInterval(() => { if(nodes[active].ip) document.getElementById('screen').src = `http://${nodes[active].ip}:5000/${view}?t=${Date.now()}`; }, 350);
+        function setNode(n) { active = n; document.querySelectorAll('.n-btn').forEach(b => b.classList.remove('active')); document.getElementById(n === 'salon' ? 'n-salon' : 'node-room').classList.add('active'); sync(); }
+        function toggleView() { view = (view === 'screen' ? 'webcam' : 'screen'); }
+        setInterval(() => { if(nodes[active].ip) document.getElementById('screen').src = `http://${nodes[active].ip}:5000/${view}?t=${Date.now()}`; }, 400);
         function act(cmd, extra = {}) { fetch(`http://${nodes[active].ip}:5000/action`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({cmd, ...extra}) }); }
-        
-        // עכבר חכם: לחיצה רגילה וקליק ימני (מגע ארוך)
-        let touchTimer;
-        const sBox = document.getElementById('screen-box');
-        sBox.onmousedown = function(e) {
-            const rect = this.getBoundingClientRect();
-            const x = (e.clientX - rect.left)/rect.width;
-            const y = (e.clientY - rect.top)/rect.height;
-            touchTimer = setTimeout(() => act('right_click', {x, y}), 600);
-        };
-        sBox.onmouseup = function(e) {
-            clearTimeout(touchTimer);
-            const rect = this.getBoundingClientRect();
-            const x = (e.clientX - rect.left)/rect.width;
-            const y = (e.clientY - rect.top)/rect.height;
-            if (Date.now() - touchTimer < 600) act('click', {x, y});
-        };
-        sync(); setInterval(sync, 5000);
+        document.getElementById('screen-box').onclick = function(e) { const r = this.getBoundingClientRect(); act('click', { x: (e.clientX - r.left)/r.width, y: (e.clientY - r.top)/r.height }); };
+        sync(); setInterval(sync, 10000);
     </script>
 </body>
 </html>
