@@ -1,5 +1,6 @@
 {
-  "ip": "10.100.102.10",
-  "name": "salon",
-  "last_sync": "15:11:22"
+  "status": "VERIFIED-GLOBAL",
+  "ip": "100.99.185.100",
+  "last_sync": "2026-04-01 16:31:50",
+  "name": "salon"
 }
