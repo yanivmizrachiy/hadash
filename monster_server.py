@@ -1,4 +1,4 @@
-import pyautogui, os, cv2, time, psutil, socket
+import pyautogui, os, cv2, time, psutil, subprocess, socket
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from io import BytesIO
@@ -10,17 +10,12 @@ pyautogui.FAILSAFE = False
 
 @app.route('/health')
 def health():
-    return jsonify({
-        "status": "online",
-        "cpu": psutil.cpu_percent(),
-        "ram": psutil.virtual_memory().percent,
-        "disk": psutil.disk_usage('/').percent
-    })
+    return jsonify({"cpu": psutil.cpu_percent(), "ram": psutil.virtual_memory().percent, "pc": socket.gethostname()})
 
 @app.route('/screen')
 def screen():
     img = pyautogui.screenshot()
-    img = img.resize((1280, 720))
+    img = img.resize((1024, 576))
     img_io = BytesIO()
     img.save(img_io, 'JPEG', quality=30)
     img_io.seek(0)
@@ -35,26 +30,40 @@ def webcam():
     _, buf = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 35])
     return send_file(BytesIO(buf), mimetype='image/jpeg')
 
-@app.route('/repair', methods=['POST'])
-def repair():
-    # פקודת תיקון מרחוק - ריסטארט לשרת
-    os.system("start /b python monster_server.py")
-    return jsonify({"action": "restarting_core"})
-
 @app.route('/action', methods=['POST'])
 def action():
     data = request.json
     cmd = data.get('cmd')
+    
+    # --- פקודות עכבר ומקלדת ---
     if cmd == 'click': pyautogui.click(data['x']*pyautogui.size().width, data['y']*pyautogui.size().height)
     elif cmd == 'right_click': pyautogui.rightClick(data['x']*pyautogui.size().width, data['y']*pyautogui.size().height)
     elif cmd == 'type': pyautogui.write(data['text'], interval=0.01)
+    
+    # --- ניהול חלונות ומערכת (Win Hotkeys) ---
+    elif cmd == 'show_desktop': pyautogui.hotkey('win', 'd')
+    elif cmd == 'task_view': pyautogui.hotkey('win', 'tab')
+    elif cmd == 'alt_tab': pyautogui.hotkey('alt', 'tab')
+    elif cmd == 'close_window': pyautogui.hotkey('alt', 'f4')
+    
+    # --- שליטה בדפדפן ---
+    elif cmd == 'browser_refresh': pyautogui.press('f5')
+    elif cmd == 'browser_back': pyautogui.hotkey('alt', 'left')
+    elif cmd == 'new_tab': pyautogui.hotkey('ctrl', 't')
+    
+    # --- מדיה ומערכת ---
     elif cmd == 'vol_up': pyautogui.press('volumeup')
     elif cmd == 'vol_down': pyautogui.press('volumedown')
+    elif cmd == 'mute': pyautogui.press('volumemute')
+    elif cmd == 'play_pause': pyautogui.press('playpause')
     elif cmd == 'lock': os.system('rundll32.exe user32.dll,LockWorkStation')
+    elif cmd == 'sleep': os.system('rundll32.exe powrprof.dll,SetSuspendState 0,1,0')
+    elif cmd == 'restart': os.system('shutdown /r /t 5')
+    elif cmd == 'shutdown': os.system('shutdown /s /t 10')
     elif cmd == 'cam_off':
         global cam
         if cam: cam.release(); cam = None
-    elif cmd == 'shutdown': os.system('shutdown /s /t 10')
+        
     return jsonify({"status": "ok"}), 200
 
 if __name__ == '__main__':
