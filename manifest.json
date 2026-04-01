@@ -1,13 +1,17 @@
 {
-  "name": "TITAN OMNI-CONTROL",
-  "short_name": "TITAN",
-  "description": "מרכז בקרה ומעקב עולמי - יניב מזרחי",
+  "short_name": "TitanHub",
+  "name": "Titan Monster Multi-Control",
   "icons": [
-    { "src": "assets/icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    {
+      "src": "assets/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ],
-  "start_url": "/hadash/index.html",
+  "start_url": "./index.html",
   "display": "standalone",
-  "orientation": "portrait",
+  "theme_color": "#1B1310",
   "background_color": "#1B1310",
-  "theme_color": "#8B4513"
+  "orientation": "portrait"
 }
