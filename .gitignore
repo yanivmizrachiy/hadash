@@ -1,0 +1,19 @@
+# Windows junk
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Python junk
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+
+# System and Logs
+*.log
+ntuser.*
+NTUSER.*
+AppData/
+.pm2/
