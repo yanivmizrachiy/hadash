@@ -35,36 +35,37 @@ def action():
     data = request.json
     cmd = data.get('cmd')
     
-    # --- פקודות עכבר ומקלדת ---
+    # פקודות עכבר
     if cmd == 'click': pyautogui.click(data['x']*pyautogui.size().width, data['y']*pyautogui.size().height)
     elif cmd == 'right_click': pyautogui.rightClick(data['x']*pyautogui.size().width, data['y']*pyautogui.size().height)
+    
+    # פקודות מקלדת וטקסט
     elif cmd == 'type': pyautogui.write(data['text'], interval=0.01)
+    elif cmd == 'enter': pyautogui.press('enter')
+    elif cmd == 'backspace': pyautogui.press('backspace')
     
-    # --- ניהול חלונות ומערכת (Win Hotkeys) ---
-    elif cmd == 'show_desktop': pyautogui.hotkey('win', 'd')
-    elif cmd == 'task_view': pyautogui.hotkey('win', 'tab')
+    # ניהול חלונות (ווינדוס)
+    elif cmd == 'desktop': pyautogui.hotkey('win', 'd')
+    elif cmd == 'taskview': pyautogui.hotkey('win', 'tab')
     elif cmd == 'alt_tab': pyautogui.hotkey('alt', 'tab')
-    elif cmd == 'close_window': pyautogui.hotkey('alt', 'f4')
+    elif cmd == 'close': pyautogui.hotkey('alt', 'f4')
     
-    # --- שליטה בדפדפן ---
-    elif cmd == 'browser_refresh': pyautogui.press('f5')
-    elif cmd == 'browser_back': pyautogui.hotkey('alt', 'left')
+    # שליטה בדפדפן (כרום/אדג')
+    elif cmd == 'refresh': pyautogui.press('f5')
     elif cmd == 'new_tab': pyautogui.hotkey('ctrl', 't')
+    elif cmd == 'close_tab': pyautogui.hotkey('ctrl', 'w')
     
-    # --- מדיה ומערכת ---
+    # מדיה ומערכת
     elif cmd == 'vol_up': pyautogui.press('volumeup')
     elif cmd == 'vol_down': pyautogui.press('volumedown')
     elif cmd == 'mute': pyautogui.press('volumemute')
-    elif cmd == 'play_pause': pyautogui.press('playpause')
+    elif cmd == 'play': pyautogui.press('playpause')
     elif cmd == 'lock': os.system('rundll32.exe user32.dll,LockWorkStation')
     elif cmd == 'sleep': os.system('rundll32.exe powrprof.dll,SetSuspendState 0,1,0')
-    elif cmd == 'restart': os.system('shutdown /r /t 5')
     elif cmd == 'shutdown': os.system('shutdown /s /t 10')
-    elif cmd == 'cam_off':
-        global cam
-        if cam: cam.release(); cam = None
-        
-    return jsonify({"status": "ok"}), 200
+    elif cmd == 'restart': os.system('shutdown /r /t 5')
+    
+    return jsonify({"status": "success"}), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, threaded=True)

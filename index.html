@@ -4,75 +4,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="manifest" href="manifest.json">
-    <title>TITAN COMMAND CENTER</title>
+    <title>TITAN V11.0 OMNI</title>
     <style>
         body { background: #1B1310; color: #D2B48C; font-family: sans-serif; text-align: center; margin: 0; padding: 10px; user-select: none; }
         .header { color: #8B4513; text-shadow: 2px 2px #000; font-size: 20px; font-weight: bold; margin-bottom: 10px; }
-        
-        /* אזור המסך */
         .screen-container { width: 100%; max-width: 500px; height: 280px; border: 3px solid #5D4037; border-radius: 15px; background: #000; margin: 0 auto; overflow: hidden; position: relative; box-shadow: 0 5px 20px #000; }
         #screen { width: 100%; height: 100%; object-fit: contain; }
-        .stats { font-size: 11px; color: #8D6E63; margin-top: 5px; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 5px; display: inline-block; }
-
-        /* מרכז הבקרה - קטגוריות */
+        .stats { font-size: 11px; color: #8D6E63; margin-top: 5px; }
         .section-title { font-size: 14px; color: #8B4513; margin-top: 15px; text-align: right; border-bottom: 1px solid #3E2723; padding-bottom: 3px; font-weight: bold; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; margin-top: 8px; }
-        .btn { background: #6D4C41; color: #F5F5DC; border: none; padding: 12px 5px; border-radius: 10px; font-weight: bold; border-bottom: 3px solid #3E2723; font-size: 12px; cursor: pointer; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
+        .btn { background: #6D4C41; color: #F5F5DC; border: none; padding: 12px 2px; border-radius: 10px; font-weight: bold; border-bottom: 3px solid #3E2723; font-size: 11px; cursor: pointer; }
         .btn:active { transform: translateY(2px); border-bottom: 1px solid #3E2723; }
-        .btn-blue { background: #455A64; border-bottom-color: #263238; }
         .btn-gold { background: #8B4513; border-bottom-color: #5D4037; }
         .btn-red { background: #3E2723; color: #FF8A65; }
-
-        /* קלט טקסט */
-        .input-row { display: flex; gap: 5px; margin-top: 15px; }
-        input { flex: 1; padding: 12px; border-radius: 10px; border: none; background: #EADDCA; font-size: 14px; text-align: right; }
+        input { width: 90%; padding: 12px; border-radius: 10px; border: none; background: #EADDCA; margin-top: 10px; text-align: right; }
     </style>
 </head>
 <body>
-    <div class="header">TITAN OMNI-COMMANDER V10.0</div>
-    
+    <div class="header">TITAN OMNI-CONTROL V11.0</div>
+    <div class="selector" style="display:flex; gap:10px; margin-bottom:10px;">
+        <button id="n-salon" class="btn btn-gold" style="flex:1" onclick="setNode('salon')">🛋️ סלון</button>
+        <button id="n-room" class="btn" style="flex:1" onclick="setNode('room')">🖥️ חדר</button>
+    </div>
     <div class="screen-container" id="screen-box"><img id="screen" src=""></div>
-    <div id="stats" class="stats">System Syncing...</div>
-
-    <div class="input-row">
+    <div id="stats" class="stats">מסנכרן מערכת עולמית...</div>
+    <div style="display:flex; gap:5px; margin-top:10px;">
         <input type="text" id="ti" placeholder="הקלד למחשב...">
         <button class="btn btn-gold" onclick="act('type', {text: document.getElementById('ti').value})">שלח</button>
     </div>
-
-    <div class="section-title">📺 ניהול חלונות</div>
+    <div class="section-title">📺 ניהול ווינדוס</div>
     <div class="grid">
-        <button class="btn btn-blue" onclick="act('show_desktop')">🏠 שולחן</button>
-        <button class="btn btn-blue" onclick="act('task_view')">📑 חלונות</button>
-        <button class="btn btn-blue" onclick="act('alt_tab')">🔄 החלף</button>
-        <button class="btn btn-red" onclick="act('close_window')">❌ סגור</button>
+        <button class="btn" onclick="act('desktop')">🏠 שולחן</button>
+        <button class="btn" onclick="act('taskview')">📑 חלונות</button>
+        <button class="btn" onclick="act('alt_tab')">🔄 החלף</button>
+        <button class="btn btn-red" onclick="act('close')">❌ סגור</button>
     </div>
-
-    <div class="section-title">🌐 דפדפן</div>
+    <div class="section-title">🌐 אינטרנט ומצלמה</div>
     <div class="grid">
-        <button class="btn" onclick="act('browser_refresh')">🔄 רענן</button>
-        <button class="btn" onclick="act('browser_back')">⬅️ אחורה</button>
+        <button class="btn" onclick="act('refresh')">🔄 רענן</button>
         <button class="btn" onclick="act('new_tab')">➕ טאב</button>
-        <button class="btn" onclick="toggleView()">📷 מצלמה</button>
+        <button class="btn" onclick="act('close_tab')">🗑️ סגור טאב</button>
+        <button class="btn btn-gold" onclick="toggleView()">📷 מצלמה</button>
     </div>
-
-    <div class="section-title">🔊 מדיה ומערכת</div>
+    <div class="section-title">🔊 מדיה וקול</div>
     <div class="grid">
         <button class="btn" onclick="act('vol_up')">🔊 +</button>
         <button class="btn" onclick="act('vol_down')">🔉 -</button>
         <button class="btn" onclick="act('mute')">🔇 השתק</button>
-        <button class="btn" onclick="act('play_pause')">⏯️ נגן</button>
+        <button class="btn" onclick="act('play')">⏯️ נגן/עצור</button>
     </div>
-
-    <div class="section-title">🛠️ בקרת כוח</div>
+    <div class="section-title">🛠️ מצבי כוח</div>
     <div class="grid">
         <button class="btn btn-red" onclick="act('lock')">🔒 נעל</button>
         <button class="btn btn-red" onclick="act('sleep')">🌙 שינה</button>
         <button class="btn btn-red" onclick="act('restart')">🔁 איתחול</button>
-        <button class="btn btn-red" onclick="confirmShutdown()">🛑 כיבוי</button>
+        <button class="btn btn-red" onclick="act('shutdown')">🛑 כיבוי</button>
     </div>
-
     <script>
-        let nodes = { salon: { ip: "10.100.102.10" }, room: { ip: "10.100.102.16" } };
+        let nodes = { salon: { ip: "" }, room: { ip: "" } };
         let active = 'salon'; let view = 'screen';
         async function sync() {
             try {
@@ -80,30 +69,29 @@
                 const r = await fetch('https://raw.githubusercontent.com/yanivmizrachiy/hadash/main/room_status.json').then(r => r.json());
                 nodes.salon.ip = s.ip; nodes.room.ip = r.ip;
                 const h = await fetch(`http://${nodes[active].ip}:5000/health`).then(r => r.json());
-                document.getElementById('stats').innerText = `CPU: ${h.cpu}% | RAM: ${h.ram}% | NODE: ${active.toUpperCase()}`;
+                document.getElementById('stats').innerText = `CPU: ${h.cpu}% | RAM: ${h.ram}% | GLOBAL IP: ${nodes[active].ip}`;
             } catch(e) {}
         }
+        function setNode(n) { active = n; sync(); }
         function toggleView() { view = (view === 'screen' ? 'webcam' : 'screen'); }
-        function confirmShutdown() { if(confirm("לכבות את המחשב באמת?")) act('shutdown'); }
         setInterval(() => { if(nodes[active].ip) document.getElementById('screen').src = `http://${nodes[active].ip}:5000/${view}?t=${Date.now()}`; }, 350);
         function act(cmd, extra = {}) { fetch(`http://${nodes[active].ip}:5000/action`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({cmd, ...extra}) }); }
-        
         let touchTimer;
         const sBox = document.getElementById('screen-box');
         sBox.onmousedown = function(e) {
             const rect = this.getBoundingClientRect();
             const x = (e.clientX - rect.left)/rect.width;
             const y = (e.clientY - rect.top)/rect.height;
-            touchTimer = setTimeout(() => act('right_click', {x, y}), 600);
+            touchTimer = setTimeout(() => act('right_click', {x, y}), 500);
         };
         sBox.onmouseup = function(e) {
             clearTimeout(touchTimer);
             const rect = this.getBoundingClientRect();
             const x = (e.clientX - rect.left)/rect.width;
             const y = (e.clientY - rect.top)/rect.height;
-            if (Date.now() - touchTimer < 600) act('click', {x, y});
+            if (Date.now() - touchTimer < 500) act('click', {x, y});
         };
-        sync(); setInterval(sync, 8000);
+        sync(); setInterval(sync, 5000);
     </script>
 </body>
 </html>
