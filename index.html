@@ -3,90 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TITAN V12.0 QUANTUM</title>
+    <title>TITAN V12.5 IMMORTAL</title>
     <style>
-        body { background: #0F0907; color: #EADDCA; font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; padding: 10px; overflow-x: hidden; }
-        .header { color: #D2B48C; text-shadow: 0 0 10px rgba(210,180,140,0.5); font-size: 22px; font-weight: bold; margin-bottom: 12px; letter-spacing: 1px; }
-        
-        /* מסגרת מסך פרימיום */
-        .screen-outer { padding: 5px; background: linear-gradient(145deg, #3E2723, #1B1310); border-radius: 22px; box-shadow: 0 15px 35px rgba(0,0,0,0.8); margin: 0 auto; max-width: 600px; }
-        .screen-container { width: 100%; height: 320px; border-radius: 18px; background: #000; overflow: hidden; position: relative; }
-        #screen { width: 100%; height: 100%; object-fit: contain; image-rendering: -webkit-optimize-contrast; }
-
-        .stats-bar { display: flex; justify-content: space-around; font-size: 10px; color: #8D6E63; margin-top: 8px; font-family: monospace; }
-        
-        /* כפתורי Glassmorphism */
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 15px; max-width: 600px; margin-left: auto; margin-right: auto; }
-        .btn { background: rgba(109, 76, 65, 0.4); backdrop-filter: blur(10px); color: #F5F5DC; border: 1px solid rgba(255,255,255,0.1); padding: 14px 2px; border-radius: 12px; font-weight: bold; font-size: 12px; transition: all 0.2s ease; }
-        .btn:active { transform: scale(0.92); background: #8B4513; }
-        .btn-main { background: #8B4513; box-shadow: 0 4px 15px rgba(139, 69, 19, 0.4); }
-        .btn-danger { background: rgba(62, 39, 35, 0.8); color: #FFAB91; }
-
-        input { width: 90%; max-width: 580px; padding: 16px; border-radius: 15px; border: none; background: rgba(234, 221, 202, 0.9); margin-top: 15px; font-size: 16px; text-align: right; box-shadow: inset 0 2px 10px rgba(0,0,0,0.2); }
+        body { background: #0F0907; color: #EADDCA; font-family: sans-serif; text-align: center; margin: 0; padding: 10px; overflow-x: hidden; }
+        .header { color: #D2B48C; font-size: 20px; font-weight: bold; margin-bottom: 10px; }
+        .screen-outer { padding: 4px; background: linear-gradient(145deg, #3E2723, #1B1310); border-radius: 18px; box-shadow: 0 10px 30px #000; margin: 0 auto; max-width: 550px; }
+        .screen-container { width: 100%; height: 280px; border-radius: 15px; background: #000; overflow: hidden; position: relative; }
+        #screen { width: 100%; height: 100%; object-fit: contain; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; max-width: 550px; margin-left: auto; margin-right: auto; }
+        .btn { background: rgba(109, 76, 65, 0.4); backdrop-filter: blur(10px); color: #F5F5DC; border: 1px solid rgba(255,255,255,0.1); padding: 12px 2px; border-radius: 10px; font-weight: bold; font-size: 11px; }
+        .btn:active { background: #8B4513; transform: scale(0.95); }
+        .btn-gold { background: #8B4513; }
+        input { width: 85%; padding: 14px; border-radius: 12px; border: none; background: rgba(234, 221, 202, 0.9); margin-top: 10px; font-size: 14px; text-align: right; }
     </style>
 </head>
 <body>
-    <div class="header">TITAN QUANTUM V12.0</div>
-    
+    <div class="header">TITAN OMNI-HUB V12.5</div>
     <div class="screen-outer">
         <div class="screen-container" id="screen-box"><img id="screen" src=""></div>
     </div>
-    
-    <div class="stats-bar" id="stats">SYNCING WITH TITAN MESH...</div>
-
-    <div style="display:flex; gap:8px; margin-top:15px; max-width:600px; margin-left:auto; margin-right:auto;">
-        <input type="text" id="ti" placeholder="כתוב למחשב...">
-        <button class="btn btn-main" style="width:80px; margin-top:15px;" onclick="act('type', {text: document.getElementById('ti').value})">שלח</button>
+    <div style="display:flex; gap:5px; margin-top:10px; justify-content:center;">
+        <input type="text" id="ti" placeholder="הקלד למחשב...">
+        <button class="btn btn-gold" style="width:60px; margin-top:10px;" onclick="act('type', {text: document.getElementById('ti').value})">שלח</button>
     </div>
-
     <div class="grid">
-        <button class="btn btn-main" onclick="toggleView()">📷 מצלמה</button>
+        <button class="btn btn-gold" onclick="toggleView()">📷 מצלמה</button>
         <button class="btn" onclick="act('desktop')">🏠 שולחן</button>
         <button class="btn" onclick="act('vol_up')">🔊 +</button>
         <button class="btn" onclick="act('vol_down')">🔉 -</button>
     </div>
-
     <div class="grid">
-        <button class="btn" onclick="act('lock')">🔒 נעל</button>
-        <button class="btn btn-danger" onclick="act('shutdown')">🛑 כיבוי</button>
+        <button class="btn" onclick="act('copy')">📄 העתק</button>
+        <button class="btn" onclick="act('paste')">📋 הדבק</button>
+        <button class="btn" onclick="act('task_manager')">⚙️ מנהל משימות</button>
+        <button class="btn" onclick="act('enter')">⏎ Enter</button>
+    </div>
+    <div class="grid">
         <button class="btn" onclick="setNode('salon')">🛋️ סלון</button>
         <button class="btn" onclick="setNode('room')">🖥️ חדר</button>
+        <button class="btn" onclick="act('lock')">🔒 נעל</button>
+        <button class="btn" style="background:#3E2723; color:#FFAB91;" onclick="act('shutdown')">🛑 כיבוי</button>
     </div>
-
     <script>
         let nodes = { salon: { ip: "" }, room: { ip: "" } };
         let active = 'salon'; let view = 'screen';
-        
         async function sync() {
             try {
                 const s = await fetch('https://raw.githubusercontent.com/yanivmizrachiy/hadash/main/salon_status.json').then(r => r.json());
                 const r = await fetch('https://raw.githubusercontent.com/yanivmizrachiy/hadash/main/room_status.json').then(r => r.json());
                 nodes.salon.ip = s.ip; nodes.room.ip = r.ip;
-                const h = await fetch(`http://${nodes[active].ip}:5000/health`).then(r => r.json());
-                document.getElementById('stats').innerText = `CPU: ${h.cpu}% | RAM: ${h.ram}% | ULTRA-HD ACTIVE`;
             } catch(e) {}
         }
-
-        // Quantum Stream Loop
         function updateScreen() {
-            if(nodes[active].ip) {
-                document.getElementById('screen').src = `http://${nodes[active].ip}:5000/${view}?t=${Date.now()}`;
-            }
-            requestAnimationFrame(() => setTimeout(updateScreen, 100)); // Turbo: 10 FPS
+            if(nodes[active].ip) { document.getElementById('screen').src = `http://${nodes[active].ip}:5000/${view}?t=${Date.now()}`; }
+            requestAnimationFrame(() => setTimeout(updateScreen, 120));
         }
-
         function setNode(n) { active = n; sync(); }
         function toggleView() { view = (view === 'screen' ? 'webcam' : 'screen'); }
         function act(cmd, extra = {}) { fetch(`http://${nodes[active].ip}:5000/action`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({cmd, ...extra}) }); if(cmd==='type') document.getElementById('ti').value=''; }
-        
-        // Touch Engine 2.0
-        let tT;
-        const sB = document.getElementById('screen-box');
+        let tT; const sB = document.getElementById('screen-box');
         sB.onmousedown = (e) => { const r = sB.getBoundingClientRect(); const x = (e.clientX - r.left)/r.width, y = (e.clientY - r.top)/r.height; tT = setTimeout(() => act('right_click', {x, y}), 500); };
         sB.onmouseup = (e) => { clearTimeout(tT); const r = sB.getBoundingClientRect(); const x = (e.clientX - r.left)/r.width, y = (e.clientY - r.top)/r.height; if(Date.now() - tT < 500) act('click', {x, y}); };
-        
-        sync(); setInterval(sync, 5000);
-        updateScreen();
+        sync(); setInterval(sync, 5000); updateScreen();
     </script>
 </body>
 </html>

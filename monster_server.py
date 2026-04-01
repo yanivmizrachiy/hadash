@@ -48,9 +48,14 @@ def action():
     elif cmd == 'desktop': pyautogui.hotkey('win', 'd')
     elif cmd == 'vol_up': pyautogui.press('volumeup')
     elif cmd == 'vol_down': pyautogui.press('volumedown')
+    elif cmd == 'copy': pyautogui.hotkey('ctrl', 'c')
+    elif cmd == 'paste': pyautogui.hotkey('ctrl', 'v')
+    elif cmd == 'task_manager': pyautogui.hotkey('ctrl', 'shift', 'esc')
+    elif cmd == 'enter': pyautogui.press('enter')
     elif cmd == 'lock': os.system('rundll32.exe user32.dll,LockWorkStation')
     elif cmd == 'shutdown': os.system('shutdown /s /t 10')
     return jsonify({"status": "ok"}), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, threaded=True)
+
