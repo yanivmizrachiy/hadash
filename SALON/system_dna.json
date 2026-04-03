@@ -1,40 +1,9 @@
 {
-  "System": {
-    "Uptime": {
-      "Ticks": 1802275338316,
-      "Days": 2,
-      "Hours": 2,
-      "Milliseconds": 533,
-      "Microseconds": 831,
-      "Nanoseconds": 600,
-      "Minutes": 3,
-      "Seconds": 47,
-      "TotalDays": 2.0859668267546296,
-      "TotalHours": 50.06320384211111,
-      "TotalMilliseconds": 180227533.8316,
-      "TotalMicroseconds": 180227533831.6,
-      "TotalNanoseconds": 180227533831600.0,
-      "TotalMinutes": 3003.7922305266666,
-      "TotalSeconds": 180227.5338316
-    },
-    "OS": "Microsoft Windows 11 Home",
-    "User": "yaniv",
-    "PC_Name": "MIZRACHI",
-    "OS_Version": null
-  },
-  "Hardware": {
-    "Cores": 10,
-    "Disk_C_Free": "557GB",
-    "GPU": "Intel(R) UHD Graphics",
-    "CPU": "13th Gen Intel(R) Core(TM) i7-13620H",
-    "Total_RAM": "16GB"
-  },
-  "Network": {
-    "MAC": [
-      "40-C2-BA-6A-0E-61",
-      ""
-    ],
-    "Local_IP": "10.100.102.10",
-    "Tailscale_IP": "100.99.185.100"
-  }
+  "GPU": "Intel(R) UHD Graphics",
+  "OS": "Microsoft Windows 11 Home",
+  "RAM": "16GB",
+  "Processor": "13th Gen Intel(R) Core(TM) i7-13620H",
+  "IP_Tailscale": "100.99.185.100",
+  "IP_Local": "10.100.102.10",
+  "PC_Name": "MIZRACHI"
 }
