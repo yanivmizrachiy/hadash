@@ -3,57 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TITAN HUB PRO</title>
+    <link rel="manifest" href="manifest.json">
+    <title>TITAN HUB V18.5</title>
     <style>
-        body { background: #1B1310; color: #D2B48C; font-family: sans-serif; text-align: center; margin: 0; padding: 10px; }
-        .header { color: #8B4513; text-shadow: 2px 2px #000; font-size: 24px; font-weight: bold; margin-bottom: 10px; }
-        .screen-container { width: 98%; max-width: 500px; height: 280px; border: 4px solid #5D4037; border-radius: 20px; background: #000; margin: 0 auto; overflow: hidden; border: 3px solid #3E2723; box-shadow: 0 10px 40px #000; }
+        body { background: #0F0907; color: #EADDCA; font-family: sans-serif; text-align: center; margin: 0; padding: 10px; overflow: hidden; }
+        .header { color: #D2B48C; font-size: 20px; font-weight: bold; margin-bottom: 10px; text-shadow: 0 0 10px rgba(139,69,19,0.5); }
+        .screen-container { width: 100%; max-width: 550px; height: 280px; border-radius: 18px; background: #000; margin: 0 auto; overflow: hidden; border: 3px solid #3E2723; box-shadow: 0 10px 40px #000; position: relative; }
         #screen { width: 100%; height: 100%; object-fit: contain; }
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 98%; max-width: 500px; margin: 20px auto; }
-        .btn { background: #6D4C41; color: #F5F5DC; border: none; padding: 18px; border-radius: 15px; font-weight: bold; border-bottom: 6px solid #3E2723; font-size: 16px; }
-        .btn:active { transform: translateY(4px); border-bottom: 2px solid #3E2723; }
-        input { width: 90%; max-width: 480px; padding: 18px; border-radius: 12px; border: none; background: #EADDCA; margin-top: 10px; font-size: 18px; text-align: right; }
+        .stats { font-size: 11px; color: #8D6E63; margin-top: 5px; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 10px auto; max-width: 550px; }
+        .btn { background: rgba(109,76,65,0.4); backdrop-filter: blur(10px); color: #F5F5DC; border: 1px solid rgba(255,255,255,0.1); padding: 15px 2px; border-radius: 12px; font-weight: bold; font-size: 11px; cursor: pointer; }
+        .btn:active { background: #8B4513; transform: scale(0.95); }
+        .btn-gold { background: #8B4513; }
+        .btn-handshake { background: #E67E22; color: white; grid-column: span 2; padding: 15px; }
+        input { width: 85%; padding: 14px; border-radius: 12px; border: none; background: #EADDCA; margin-top: 10px; font-size: 14px; text-align: right; }
     </style>
 </head>
 <body>
-    <div class="header">TITAN ELITE V14.0</div>
-    <div style="display:flex; gap:10px; margin-bottom:10px; justify-content:center;">
-        <button class="btn" style="flex:1; background:#8B4513;" onclick="setNode('salon')">🛋️ סלון</button>
-        <button class="btn" style="flex:1; background:#8B4513;" onclick="setNode('room')">🖥️ חדר</button>
+    <div class="header">TITAN OMNI-MASTER v18.5</div>
+    <div class="grid">
+        <button class="btn btn-gold" onclick="setNode('salon')">🛋️ סלון</button>
+        <button class="btn btn-gold" onclick="setNode('room')">🖥️ חדר</button>
+        <button class="btn btn-handshake" onclick="window.open('http://'+nodes[active].ip+':5000/screen', '_blank')">🔑 אישור חיבור</button>
     </div>
     <div class="screen-container" id="screen-box"><img id="screen" src=""></div>
-    <div id="stats" style="margin-top:5px; font-size:12px; color:#8D6E63;">Syncing...</div>
-    <input type="text" id="ti" placeholder="כתוב למחשב...">
-    <div class="btn-grid">
-        <button class="btn" onclick="act('type', {text: document.getElementById('ti').value})">שלח טקסט</button>
-        <button class="btn" onclick="act('vol_up')">🔊 פלוס</button>
-        <button class="btn" onclick="act('vol_down')">🔉 מינוס</button>
+    <div id="stats" class="stats">טוען נתונים...</div>
+    <div style="display:flex; gap:5px; margin-top:10px; justify-content:center;">
+        <input type="text" id="ti" placeholder="כתוב למחשב...">
+        <button class="btn btn-gold" style="width:60px; margin-top:10px;" onclick="act('type', {text: document.getElementById('ti').value})">שלח</button>
+    </div>
+    <div class="grid">
+        <button class="btn" onclick="toggleView()" id="cam-btn">📷 מצלמה</button>
         <button class="btn" onclick="act('desktop')">🏠 שולחן</button>
-        <button class="btn" onclick="act('lock')" style="background:#3E2723">🔒 נעל PC</button>
-        <button class="btn" style="background:#3E2723; color:#FF8A65;" onclick="act('shutdown')">🛑 כיבוי</button>
+        <button class="btn" onclick="act('vol_up')">🔊 +</button>
+        <button class="btn" onclick="act('vol_down')">🔉 -</button>
+    </div>
+    <div class="grid">
+        <button class="btn" style="background:#3E2723" onclick="act('lock')">🔒 נעל</button>
+        <button class="btn" style="background:#3E2723" onclick="act('shutdown')">🛑 כיבוי</button>
+        <button class="btn" style="grid-column: span 2;" onclick="location.reload()">🔄 רענן מערכת</button>
     </div>
     <script>
         let nodes = { salon: { ip: "100.99.185.100" }, room: { ip: "100.99.185.100" } };
-        let active = 'salon';
+        let active = 'salon'; let view = 'screen';
         async function sync() {
             try {
                 const s = await fetch('https://raw.githubusercontent.com/yanivmizrachiy/hadash/main/salon_status.json').then(r => r.json());
                 const r = await fetch('https://raw.githubusercontent.com/yanivmizrachiy/hadash/main/room_status.json').then(r => r.json());
                 nodes.salon.ip = s.ip; nodes.room.ip = r.ip;
                 const h = await fetch(`http://${nodes[active].ip}:5000/health`).then(r => r.json());
-                document.getElementById('stats').innerText = `CPU: ${h.cpu}% | RAM: ${h.ram}% | IP: ${nodes[active].ip}`;
+                document.getElementById('stats').innerText = `CPU: ${h.cpu}% | RAM: ${h.ram}% | NODE: ${active.toUpperCase()}`;
             } catch(e) {}
         }
         function setNode(n) { active = n; sync(); }
-        setInterval(() => { if(nodes[active].ip) document.getElementById('screen').src = `http://${nodes[active].ip}:5000/screen?t=${Date.now()}`; }, 400);
-        function act(cmd, extra = {}) { 
-            fetch(`http://${nodes[active].ip}:5000/action`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({cmd, ...extra}) });
-            if(cmd==='type') document.getElementById('ti').value = '';
+        function toggleView() { 
+            view = (view === 'screen' ? 'webcam' : 'screen'); 
+            document.getElementById('cam-btn').innerText = (view === 'screen' ? '📷 מצלמה' : '📺 מסך');
         }
-        document.getElementById('screen-box').onclick = function(e) {
-            const r = this.getBoundingClientRect();
-            act('click', { x: (e.clientX - r.left)/r.width, y: (e.clientY - r.top)/r.height });
-        };
+        setInterval(() => { if(nodes[active].ip) document.getElementById('screen').src = `http://${nodes[active].ip}:5000/${view}?t=${Date.now()}`; }, 350);
+        function act(cmd, extra = {}) { 
+            fetch(`http://${nodes[active].ip}:5000/action`, { 
+                method: 'POST', mode: 'cors', headers: {'Content-Type': 'application/json'}, 
+                body: JSON.stringify({cmd, ...extra}) 
+            });
+            if(cmd==='type') document.getElementById('ti').value='';
+        }
+        let tT; const sB = document.getElementById('screen-box');
+        sB.onmousedown = (e) => { const r = sB.getBoundingClientRect(); const x = (e.clientX - r.left)/r.width, y = (e.clientY - r.top)/r.height; tT = setTimeout(() => act('right_click', {x, y}), 500); };
+        sB.onmouseup = (e) => { clearTimeout(tT); const r = sB.getBoundingClientRect(); const x = (e.clientX - r.left)/r.width, y = (e.clientY - r.top)/r.height; if(Date.now() - tT < 500) act('click', {x, y}); };
         sync(); setInterval(sync, 10000);
     </script>
 </body>
