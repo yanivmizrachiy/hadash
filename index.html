@@ -3,97 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TITAN V24.0 OMNI-MASTER</title>
+    <title>TITAN V25.0 OMNI</title>
     <style>
-        :root { --gold: #D2B48C; --bg: #0A0706; --brown: #3E2723; --red: #B71C1C; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 10px; text-align: center; }
-        .header { color: var(--gold); font-size: 20px; font-weight: bold; margin-bottom: 10px; text-shadow: 0 0 15px rgba(210,180,140,0.4); }
+        :root { --gold: #D2B48C; --dark: #0A0706; --brown: #3E2723; }
+        body { background: var(--dark); color: white; font-family: sans-serif; margin: 0; padding: 10px; text-align: center; touch-action: none; }
+        .header { color: var(--gold); font-size: 20px; font-weight: bold; margin-bottom: 10px; }
         
-        /* מסגרת מסך קוונטום */
+        /* מסגרת קוונטום חסינת חסימות */
         .screen-container { width: 98%; max-width: 500px; height: 280px; border: 3px solid var(--brown); border-radius: 20px; background: #000; margin: 0 auto; overflow: hidden; position: relative; box-shadow: 0 10px 40px #000; }
         #screen { width: 100%; height: 100%; object-fit: contain; }
         
-        .status-line { font-size: 11px; color: #8D6E63; margin-top: 5px; font-family: monospace; background: rgba(0,0,0,0.4); padding: 5px; border-radius: 5px; display: inline-block; }
-
-        /* לוח בקרה ELITE */
-        .panel { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 15px; max-width: 500px; margin-left: auto; margin-right: auto; }
-        .btn { background: rgba(62, 39, 35, 0.6); border: 1px solid rgba(210,180,140,0.2); color: white; padding: 16px 2px; border-radius: 12px; font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn:active { background: var(--gold); color: black; transform: scale(0.92); }
-        .btn-gold { background: var(--gold); color: black; border: none; }
-        .btn-danger { background: var(--red); border: none; }
-        
-        .section-tag { font-size: 12px; color: var(--gold); text-align: right; margin: 15px 0 5px; font-weight: bold; border-right: 3px solid var(--gold); padding-right: 8px; }
-        input { width: 90%; padding: 15px; border-radius: 12px; border: none; background: #1E1A17; color: var(--gold); margin-top: 10px; font-size: 16px; text-align: right; }
+        .btn-handshake { background: #E67E22; color: white; width: 95%; padding: 18px; border-radius: 15px; font-weight: bold; border: none; margin-bottom: 15px; font-size: 16px; box-shadow: 0 0 20px rgba(230, 126, 34, 0.5); }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-width: 500px; margin: 15px auto; }
+        .btn { background: rgba(62, 39, 35, 0.7); border: 1px solid rgba(210,180,140,0.2); color: white; padding: 15px 2px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+        .btn:active { background: var(--gold); color: black; }
+        input { width: 85%; padding: 15px; border-radius: 12px; border: none; background: #EADDCA; margin-top: 10px; font-size: 16px; text-align: right; }
     </style>
 </head>
 <body>
-    <div class="header">TITAN OMNI-MASTER V24.0</div>
+    <div class="header">TITAN v25.0 OMNI-MASTER</div>
     
-    <div class="screen-container" id="screen-box"><img id="screen" src="" alt="Connecting to Salon PC..."></div>
-    <div id="status" class="status-line">מזהה DNA מערכת...</div>
+    <button class="btn-handshake" onclick="forceConnect()">🔓 שלב 1: פתח אישור וידאו (חובה)</button>
 
-    <input type="text" id="ti" placeholder="הקלד פקודה למחשב...">
+    <div class="screen-container" id="screen-box">
+        <img id="screen" src="" alt="ממתין לאישור חיבור...">
+    </div>
+    <div id="stats" style="font-size:10px; color: #8D6E63; margin-top: 5px;">מזהה IP עולמי...</div>
+
+    <input type="text" id="ti" placeholder="כתוב למחשב...">
     
-    <div class="section-tag">🖱️ שליטה בעכבר ומצלמה</div>
-    <div class="panel">
-        <button class="btn btn-gold" onclick="toggleView()">📷 מצלמה</button>
+    <div class="grid">
+        <button class="btn" onclick="act('type', {text: document.getElementById('ti').value})">שלח</button>
         <button class="btn" onclick="act('desktop')">🏠 שולחן</button>
         <button class="btn" onclick="act('vol_up')">🔊 +</button>
         <button class="btn" onclick="act('vol_down')">🔉 -</button>
     </div>
 
-    <div class="section-tag">⌨️ מקלדת ופעולות אמת</div>
-    <div class="panel">
-        <button class="btn btn-gold" onclick="act('type', {text: document.getElementById('ti').value})">שלח</button>
-        <button class="btn" onclick="act('key', {key:'enter'})">ENTER</button>
-        <button class="btn" onclick="act('key', {key:'backspace'})">Backspace</button>
-        <button class="btn" onclick="window.open('http://'+nodes[active].ip+':5000/screen','_blank')">🔑 אישור</button>
-    </div>
-
-    <div class="section-tag">🛑 ניהול מערכת וכוח</div>
-    <div class="panel">
-        <button class="btn" onclick="setNode('salon')">🛋️ סלון</button>
-        <button class="btn" onclick="setNode('room')">🖥️ חדר</button>
+    <div class="grid">
+        <button class="btn" onclick="toggleView()">📷 מצלמה</button>
         <button class="btn" onclick="act('lock')">🔒 נעל</button>
-        <button class="btn btn-danger" onclick="act('shutdown')">🛑 כיבוי</button>
+        <button class="btn" style="background:#3E2723; color:#FF8A65; grid-column: span 2;" onclick="act('shutdown')">🛑 כיבוי סופי</button>
     </div>
 
     <script>
-        let nodes = { salon: { ip: "100.99.185.100" }, room: { ip: "100.99.185.100" } };
+        let nodes = { salon: { ip: "100.99.185.100" } };
         let active = 'salon'; let view = 'screen';
 
         async function sync() {
             try {
                 const r = await fetch('https://raw.githubusercontent.com/yanivmizrachiy/hadash/main/SALON/system_dna.json').then(res => res.json());
                 nodes.salon.ip = r.Tailscale_IP;
-                const h = await fetch(`http://${nodes[active].ip}:5000/health`).then(res => res.json());
-                document.getElementById('status').innerText = `CPU: ${h.cpu}% | RAM: ${h.ram}% | IP: ${nodes[active].ip}`;
-            } catch(e) { document.getElementById('status').innerText = "סנכרון ענן פעיל | IP: " + nodes[active].ip; }
+                document.getElementById('stats').innerText = "מחובר לכתובת: " + nodes.salon.ip;
+            } catch(e) {}
         }
+
+        function forceConnect() { window.open("http://" + nodes[active].ip + ":5000/screen", "_blank"); }
 
         function update() {
-            if(nodes[active].ip) document.getElementById('screen').src = `http://${nodes[active].ip}:5000/${view}?t=${Date.now()}`;
-            setTimeout(update, 150);
+            if(nodes[active].ip) {
+                document.getElementById('screen').src = `http://${nodes[active].ip}:5000/${view}?t=${Date.now()}`;
+            }
+            requestAnimationFrame(() => setTimeout(update, 150));
         }
 
-        function setNode(n) { active = n; sync(); }
-        function toggleView() { view = (view === 'screen' ? 'webcam' : 'screen'); }
-        function act(cmd, extra = {}) { 
-            fetch(`http://${nodes[active].ip}:5000/action`, { 
-                method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, 
-                body: JSON.stringify({cmd, ...extra}) 
-            });
-            if(cmd==='type') document.getElementById('ti').value='';
+        function act(cmd, extra = {}) {
+            const url = `http://${nodes[active].ip}:5000/action`;
+            // מנגנון הזרקה 'no-cors' - הפתרון היחיד לחסימת כרום
+            fetch(url, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({cmd, ...extra}) });
+            if(cmd === 'type') document.getElementById('ti').value = '';
         }
 
+        // תמיכת מגע (Touch) מלאה לסמסונג אולטרה
         const sBox = document.getElementById('screen-box');
-        sBox.onmousedown = (e) => {
+        sBox.addEventListener('pointerdown', (e) => {
             const r = sBox.getBoundingClientRect();
-            const x = (e.clientX - r.left)/r.width, y = (e.clientY - r.top)/r.height;
+            const x = (e.clientX - r.left) / r.width;
+            const y = (e.clientY - r.top) / r.height;
             act('click', {x, y});
-        };
+        });
 
-        sync(); setInterval(sync, 10000); update();
+        function toggleView() { view = (view === 'screen' ? 'webcam' : 'screen'); }
+
+        sync(); update();
     </script>
 </body>
 </html>
