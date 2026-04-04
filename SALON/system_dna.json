@@ -1,9 +1,16 @@
 {
-  "GPU": "Intel(R) UHD Graphics",
-  "OS": "Microsoft Windows 11 Home",
-  "RAM": "16GB",
-  "Processor": "13th Gen Intel(R) Core(TM) i7-13620H",
-  "IP_Tailscale": "100.99.185.100",
-  "IP_Local": "10.100.102.10",
-  "PC_Name": "MIZRACHI"
+  "Status": "VERIFIED-GLOBAL-V19.5",
+  "System": {
+    "OS": "Microsoft Windows 11 Home",
+    "PC": "MIZRACHI",
+    "OS_Build": null
+  },
+  "Network": {
+    "Tailscale_IP": "100.99.185.100",
+    "Local_IP": "10.100.102.10"
+  },
+  "Hardware": {
+    "RAM": "16GB",
+    "CPU": "13th Gen Intel(R) Core(TM) i7-13620H"
+  }
 }
