@@ -3,64 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TITAN V19.0 MASTER</title>
+    <title>TITAN V21.0</title>
     <style>
         body { background: #0F0907; color: #EADDCA; font-family: sans-serif; text-align: center; margin: 0; padding: 10px; }
-        .header { color: #8B4513; text-shadow: 0 0 10px rgba(139,69,19,0.5); font-size: 22px; font-weight: bold; }
-        .screen-box { width: 100%; max-width: 500px; height: 280px; border-radius: 18px; background: #000; margin: 10px auto; overflow: hidden; border: 3px solid #3E2723; box-shadow: 0 10px 30px #000; position: relative; }
+        .header { color: #8B4513; font-size: 22px; font-weight: bold; margin-bottom: 10px; }
+        .screen-box { width: 100%; max-width: 500px; height: 280px; border-radius: 18px; background: #000; margin: 0 auto; overflow: hidden; border: 3px solid #3E2723; }
         #screen { width: 100%; height: 100%; object-fit: contain; }
-        .btn-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 10px auto; max-width: 500px; }
-        .btn { background: rgba(109, 76, 65, 0.4); color: #F5F5DC; border: 1px solid rgba(255,255,255,0.1); padding: 15px 2px; border-radius: 12px; font-weight: bold; font-size: 11px; cursor: pointer; }
-        .btn:active { background: #8B4513; transform: scale(0.95); }
-        .btn-handshake { background: #E67E22; color: white; grid-column: span 4; padding: 15px; margin-bottom: 10px; font-size: 16px; border: none; border-radius: 15px; box-shadow: 0 0 15px #E67E22; }
+        .btn-handshake { background: #E67E22; color: white; width: 95%; padding: 15px; margin-bottom: 10px; border: none; border-radius: 15px; font-weight: bold; cursor: pointer; }
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 15px auto; max-width: 500px; }
+        .btn { background: #6D4C41; color: #F5F5DC; border: none; padding: 18px; border-radius: 12px; font-weight: bold; }
     </style>
 </head>
 <body>
-    <div class="header">TITAN ELITE V19.0</div>
-    <button class="btn-handshake" onclick="window.open('http://'+nodes[active].ip+':5000/screen', '_blank')">🔓 לחץ כאן פעם אחת להפעלת המחשב</button>
+    <div class="header">TITAN ELITE V21.0</div>
+    <button class="btn-handshake" id="handshakeBtn" onclick="doHandshake()">🔓 שלב 1: לחץ כאן לאישור וידאו</button>
     
-    <div style="display:flex; gap:10px; margin-bottom:10px; max-width:500px; margin: 0 auto;">
-        <button class="btn" style="flex:1; background:#8B4513;" onclick="setNode('salon')">🛋️ סלון</button>
-        <button class="btn" style="flex:1; background:#8B4513;" onclick="setNode('room')">🖥️ חדר</button>
-    </div>
+    <div class="screen-box"><img id="screen" src=""></div>
+    <div id="ipInfo" style="font-size:10px; color:#8D6E63; margin-top:5px;">מזהה IP...</div>
 
-    <div class="screen-box" id="screen-box"><img id="screen" src=""></div>
-    <div id="stats" style="font-size:11px; color:#8D6E63; margin-top:5px;">ממתין לחיבור...</div>
-
-    <div class="btn-grid">
-        <button class="btn" onclick="act('vol_up')">🔊 +</button>
-        <button class="btn" onclick="act('vol_down')">🔉 -</button>
-        <button class="btn" onclick="act('desktop')">🏠 שולחן</button>
-        <button class="btn" onclick="act('lock')" style="background:#3E2723">🔒 נעל</button>
-        <button class="btn btn-red" style="grid-column: span 4; background:#3E2723; color:#FF8A65; padding: 20px;" onclick="act('shutdown')">🛑 כיבוי סופי</button>
+    <div class="grid">
+        <button class="btn" onclick="act('vol_up')">🔊 פלוס</button>
+        <button class="btn" onclick="act('vol_down')">🔉 מינוס</button>
+        <button class="btn" onclick="act('lock')">🔒 נעל PC</button>
+        <button class="btn" style="background:#3E2723" onclick="act('shutdown')">🛑 כיבוי</button>
     </div>
 
     <script>
-        let nodes = { salon: { ip: "100.99.185.100" }, room: { ip: "100.99.185.100" } };
-        let active = 'salon';
+        let currentIP = "";
         async function sync() {
-            try {
-                const s = await fetch('https://raw.githubusercontent.com/yanivmizrachiy/hadash/main/salon_status.json').then(r => r.json());
-                const r = await fetch('https://raw.githubusercontent.com/yanivmizrachiy/hadash/main/room_status.json').then(r => r.json());
-                nodes.salon.ip = s.ip; nodes.room.ip = r.ip;
-                const h = await fetch(`http://${nodes[active].ip}:5000/health`).then(r => r.json());
-                document.getElementById('stats').innerText = `CPU: ${h.cpu}% | RAM: ${h.ram}% | IP: ${nodes[active].ip}`;
-            } catch(e) {}
+            const r = await fetch('https://raw.githubusercontent.com/yanivmizrachiy/hadash/main/salon_status.json').then(res => res.json());
+            currentIP = r.ip;
+            document.getElementById('ipInfo').innerText = "מחובר לכתובת: " + currentIP;
         }
-        function setNode(n) { active = n; sync(); }
-        setInterval(() => { if(nodes[active].ip) document.getElementById('screen').src = `http://${nodes[active].ip}:5000/screen?t=${Date.now()}`; }, 400);
-        
-        function act(cmd, extra = {}) { 
-            // מנגנון הזרקה עוקף חסימה
-            const url = `http://${nodes[active].ip}:5000/action`;
-            fetch(url, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({cmd, ...extra}) });
-        }
-
-        document.getElementById('screen-box').onclick = function(e) {
-            const r = this.getBoundingClientRect();
-            act('click', { x: (e.clientX - r.left)/r.width, y: (e.clientY - r.top)/r.height });
-        };
-        sync(); setInterval(sync, 8000);
+        function doHandshake() { window.open("http://" + currentIP + ":5000/screen", "_blank"); }
+        setInterval(() => { if(currentIP) document.getElementById('screen').src = "http://" + currentIP + ":5000/screen?t=" + Date.now(); }, 400);
+        function act(cmd) { fetch("http://" + currentIP + ":5000/action", { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({cmd}) }); }
+        sync();
     </script>
 </body>
 </html>

@@ -1,16 +1,8 @@
 {
-  "Network": {
-    "Local_IP": "10.100.102.10",
-    "Tailscale_IP": "100.99.185.100"
-  },
-  "System": {
-    "OS": "Microsoft Windows 11 Home",
-    "PC": "MIZRACHI",
-    "OS_Build": null
-  },
-  "Status": "VERIFIED-GLOBAL-V19.5",
-  "Hardware": {
-    "RAM": "16GB",
-    "CPU": "13th Gen Intel(R) Core(TM) i7-13620H"
-  }
+  "Status": "V21.0-ELITE-ACTIVE",
+  "PC": "MIZRACHI",
+  "CPU": "13th Gen Intel(R) Core(TM) i7-13620H",
+  "RAM": "16GB",
+  "Tailscale_IP": "100.99.185.100",
+  "OS": "Microsoft Windows 11 Home"
 }
